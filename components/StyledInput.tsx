@@ -1,26 +1,73 @@
-import { TextInput, StyleSheet } from "react-native"
-
+import React, { useState } from "react";
+import { TextInput, StyleSheet, View, Image, TouchableWithoutFeedback } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 interface StyledInputProps {
-    placeholder: string
-    onChangeText: (text: string) => void
+    placeholder: string;
+    onChangeText: (text: string) => void;
+    iconName: any; // Tipo do ícone
+    size?: number; // Tamanho do input
+    height?: number; // Altura do input
 }
 
-export default function StyledInput(
-    {placeholder,onChangeText}:StyledInputProps
-){
+export default function StyledInput({
+    placeholder,
+    onChangeText,
+    iconName,
+    size = 40, // Valor padrão para o tamanho do input
+    height = 40, // Valor padrão para a altura do input
+}: StyledInputProps) {
+
+    const [isFocused, setIsFocused] = useState(false);
+
+    const handleFocus = () => {
+        setIsFocused(true);
+    };
+
+    const handleBlur = () => {
+        setIsFocused(false);
+    };
+
     return (
-        <TextInput
-        style={styles.input}
-        onChangeText={onChangeText}
-        placeholder={placeholder} />
-    )
+
+        <View style={[styles.inputContainer, { height: height, borderColor: isFocused ? "black" : "transparent" }]}>
+            
+                <TextInput
+               
+                    style={[styles.input, { width: size - 30}]}
+                    onChangeText={onChangeText}
+                    placeholder={placeholder}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                />
+       
+            <Ionicons name={iconName} size={20} color="#000" style={styles.icon} />
+        </View>
+
+    );
 }
 
 const styles = StyleSheet.create({
-    input: {
-        width: '90%',
-        height: 40,
-        margin: 12,
+    inputContainer: {
+        width: "90%",
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 24,
         borderWidth: 1,
-    }
-})
+        borderColor: "transparent",
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        backgroundColor: "#40B590"
+    },
+    input: {
+        flex: 1,
+        height: 40,
+        opacity: 0.5,
+        fontFamily: 'Montserrat Light',
+        
+    },
+    icon: {
+        width: 20,
+        height: 20,
+        marginLeft: 10,
+    },
+});
