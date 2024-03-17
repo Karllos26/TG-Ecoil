@@ -4,13 +4,35 @@ import StyledInput from '../components/StyledInput';
 import StyledButton from '../components/StyledButton';
 import { router } from 'expo-router'
 import React from 'react';
-
+import {
+  useFonts,
+  Montserrat_100Thin,
+  Montserrat_200ExtraLight,
+  Montserrat_300Light,
+  Montserrat_400Regular,
+  Montserrat_500Medium,
+  Montserrat_600SemiBold,
+  Montserrat_700Bold,
+  Montserrat_800ExtraBold,
+  Montserrat_900Black,
+  Montserrat_100Thin_Italic,
+  Montserrat_200ExtraLight_Italic,
+  Montserrat_300Light_Italic,
+  Montserrat_400Regular_Italic,
+  Montserrat_500Medium_Italic,
+  Montserrat_600SemiBold_Italic,
+  Montserrat_700Bold_Italic,
+  Montserrat_800ExtraBold_Italic,
+  Montserrat_900Black_Italic,
+} from '@expo-google-fonts/montserrat';
 
 export default function Login() {
-  const handleLogin = () => {
+  const handleHome = () => {
     router.push('home')
   }
-
+  const handleCadasro = () => {
+    router.push('cadastroColetora')
+  }
   return (
     <View style={styles.container}>
  <View style={styles.inputContainer}>
@@ -41,7 +63,7 @@ export default function Login() {
 </View>
       <StyledButton 
       title='Entrar >'
-      onPress={handleLogin}
+      onPress={handleHome}
       color='#028960'
       width={300}
       height={50}
@@ -50,7 +72,7 @@ export default function Login() {
 <Text style={[styles.novouser,]}>
 Novo Usuario?
       </Text>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handleCadasro}>
           <Text style={styles.registrar}>
             Registre-se
           </Text>
@@ -93,12 +115,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'blue',
     textDecorationLine: 'none',
-    fontFamily: 'Montserrat Medium',
+    fontFamily: 'Montserrat_500Medium',
   },
   novouser:{
     fontSize: 16,
     marginRight: 10, // Ajuste a margem conforme necessário
-    fontFamily: 'Montserrat Medium'
+    fontFamily: 'Montserrat_500Medium'
   },
   textContainer: {
     flexDirection: 'row',
