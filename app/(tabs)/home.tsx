@@ -1,8 +1,9 @@
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import MenuBurger from '../../components/MenuBurguer';
 import PerfilButton from '../../components/PerfilButton';
 import { StyleSheet } from 'react-native';
+import ACarousel from '../../components/ACarousel';
 
 export default function Home() {
     return (
@@ -23,7 +24,10 @@ export default function Home() {
             <View style={{ paddingTop: 30 }}>
                 <Text style={styles.greetingUser}>Welcome, User!</Text>
                    
-            </View>   
+            </View>
+            <View>
+                <ACarousel></ACarousel>
+            </View>
 
         </View>
     );
