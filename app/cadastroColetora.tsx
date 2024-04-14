@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import StyledInput from '../components/StyledInput';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import StyledButton from '../components/StyledButton';
 import { router } from 'expo-router'
 import React, { useState } from 'react';
@@ -23,7 +22,7 @@ export default function CadastroColetora() {
     }
 
     const handleLogin = () => {
-        router.push('Login')
+        router.push('login')
     }
 
     return (
@@ -164,7 +163,7 @@ export default function CadastroColetora() {
                 </View>
             </View>
             <StyledButton
-                title='Cadastrar >'
+                title='Cadastrar'
                 onPress={handleHome}
                 color='#028960'
                 width={300}

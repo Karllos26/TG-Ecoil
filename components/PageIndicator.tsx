@@ -1,9 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { router } from 'expo-router';
-import { blue } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
 
 interface PageIndicatorProps {
   active: boolean; // Indica se a página está ativa

@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import StyledInput from '../components/StyledInput';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import StyledButton from '../components/StyledButton';
 import { router } from 'expo-router'
 import React, { useState } from 'react';
