@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { TextInput, StyleSheet, View } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
-import {
-    useFonts,
-    Montserrat_300Light,
-} from '@expo-google-fonts/montserrat';
 
 interface StyledInputProps {
     placeholder: string;
