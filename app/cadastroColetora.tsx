@@ -22,7 +22,7 @@ export default function CadastroColetora() {
     }
 
     const handleLogin = () => {
-        router.push('login')
+        router.push('Login')
     }
 
     return (
