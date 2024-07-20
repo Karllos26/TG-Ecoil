@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import axios from 'axios';
 
@@ -9,6 +9,8 @@ interface CardPontoProps {
     address: string;
     onPress: () => void;
 }
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const CardPonto: React.FC<CardPontoProps> = ({ iconName, coordinates, address, onPress }) => {
     const [addressDetails, setAddressDetails] = useState<any>(null);
@@ -58,7 +60,7 @@ const CardPonto: React.FC<CardPontoProps> = ({ iconName, coordinates, address, o
 
 const styles = StyleSheet.create({
     card: {
-        width: 337,
+        width: 0.9 * screenWidth,
         height: 100,
         borderRadius: 10,
         backgroundColor: '#40B59030',

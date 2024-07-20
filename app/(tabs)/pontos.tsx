@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Image, ScrollView, Dimensions, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Image, ScrollView, Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
 import MapView, { MapMarker, Marker } from 'react-native-maps';
 import {
     requestForegroundPermissionsAsync,
@@ -13,7 +13,6 @@ import CardPonto from '../../components/CardPontos';
 import { MostrarMapaButton, RecenterButton } from '../../components/MostrarMapa';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function PontosTeste() {
@@ -25,6 +24,7 @@ export default function PontosTeste() {
     const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
     const userMarkerRef = useRef<MapMarker>(null);
     const mapRef = useRef<MapView>(null);
+    const markerRefs = useRef<(MapMarker | null)[]>([]); // Alterado para aceitar MapMarker | null
 
     const coordinates = [
         { latitude: -23.107637, longitude: -47.208201 },
@@ -110,14 +110,19 @@ export default function PontosTeste() {
 
     const handleCardPress = (index: number) => {
         const selectedPoint = pointsWithAddresses[index];
-        mapRef.current?.animateCamera({
-            center: {
-                latitude: selectedPoint.latitude,
-                longitude: selectedPoint.longitude,
-            },
-            zoom: 15,
-        });
         setSelectedPointIndex(index);
+        setShowMap(true);
+        setTimeout(() => {
+            mapRef.current?.animateCamera({
+                center: {
+                    latitude: selectedPoint.latitude,
+                    longitude: selectedPoint.longitude,
+                },
+                zoom: 20,
+            });
+            // Simula o clique no marcador para abrir o callout
+            markerRefs.current[index]?.showCallout();
+        }, 500); // delay para garantir que o mapa está visível antes de animar a câmera
     };
 
     const handleMarkerPress = (index: number) => {
@@ -125,7 +130,7 @@ export default function PontosTeste() {
     };
 
     const handleMapPress = () => {
-        setSelectedPointIndex(null); // Reset selected point index to show all cards
+        setSelectedPointIndex(null); // Reseta o índice do ponto selecionado para mostrar todos os cards
     };
 
     const handleRecenterButtonPress = () => {
@@ -136,40 +141,43 @@ export default function PontosTeste() {
     return (
         <View style={styles.container}>
             {showMap && userLocation && (
-                <MapView
-                    style={styles.map}
-                    ref={mapRef}
-                    onPress={handleMapPress} // Handle map press to reset selected point index
-                    initialRegion={{
-                        latitude: userLocation.coords.latitude,
-                        longitude: userLocation.coords.longitude,
-                        latitudeDelta: 0.05,
-                        longitudeDelta: 0.05,
-                    }}
-                >
-                    <Marker
-                        ref={userMarkerRef}
-                        coordinate={{
+                <View style={styles.mapContainer}>
+                    <MapView
+                        style={styles.map}
+                        ref={mapRef}
+                        onPress={handleMapPress} 
+                        initialRegion={{
                             latitude: userLocation.coords.latitude,
                             longitude: userLocation.coords.longitude,
+                            latitudeDelta: 0.05,
+                            longitudeDelta: 0.05,
                         }}
                     >
-                        <MaterialCommunityIcons name="map-marker-radius" size={50} color="blue" />
-                    </Marker>
-
-                    {pointsWithAddresses.map((point, index) => (
                         <Marker
-                            key={index}
+                            ref={userMarkerRef}
                             coordinate={{
-                                latitude: point.latitude,
-                                longitude: point.longitude,
+                                latitude: userLocation.coords.latitude,
+                                longitude: userLocation.coords.longitude,
                             }}
-                            onPress={() => handleMarkerPress(index)}
                         >
-                            <MaterialCommunityIcons name="map-marker" size={40} color="red" />
+                            <MaterialCommunityIcons name="map-marker-radius" size={50} color="blue" />
                         </Marker>
-                    ))}
-                </MapView>
+
+                        {pointsWithAddresses.map((point, index) => (
+                            <Marker
+                                key={index}
+                                ref={(el) => markerRefs.current[index] = el} // Atualiza a referência do marcador
+                                coordinate={{
+                                    latitude: point.latitude,
+                                    longitude: point.longitude,
+                                }}
+                                onPress={() => handleMarkerPress(index)}
+                            >
+                                <MaterialCommunityIcons name="map-marker" size={40} color="red" />
+                            </Marker>
+                        ))}
+                    </MapView>
+                </View>
             )}
 
             {!showMap && (
@@ -183,10 +191,10 @@ export default function PontosTeste() {
             )}
 
             <View style={styles.buttonContainer1}>
-                <MostrarMapaButton onPress={() => {setShowMap(!showMap); setSelectedPointIndex(null);}} showMap={showMap}   />
-                
-                </View>
-                <View style={styles.buttonContainer2}>
+                <MostrarMapaButton onPress={() => {setShowMap(!showMap); setSelectedPointIndex(null);}} showMap={showMap} />
+            </View>
+
+            <View style={styles.buttonContainer2}>
                 {userLocation && (
                     <RecenterButton onPress={handleRecenterButtonPress} />
                 )}
@@ -215,8 +223,19 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 20,
     },
-    map: {
+    mapContainer: {
         height: 0.5 * screenHeight,
+        alignSelf: 'center',
+        width: 0.9 * screenWidth,
+        borderWidth: 2,
+        borderColor: '#000',
+        borderRadius: 10,
+        overflow: 'hidden',
+        marginBottom:10
+    },
+    map: {
+        flex: 1,
+        width: 0.9 * screenWidth,
     },
     imageview: {
         flex: 1 / 3 * screenHeight,

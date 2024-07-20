@@ -12,7 +12,7 @@ export default function Home() {
                 <MenuBurger
                     onPress={() => { }}
                     menuColor='#000'
-                    size={45}
+                    size={40}
                 />
                 <PerfilButton
                     onPress={() => { }}
