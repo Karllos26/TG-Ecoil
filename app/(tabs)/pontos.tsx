@@ -118,7 +118,7 @@ export default function PontosTeste() {
                     latitude: selectedPoint.latitude,
                     longitude: selectedPoint.longitude,
                 },
-                zoom: 20,
+                zoom: 16,
             });
             // Simula o clique no marcador para abrir o callout
             markerRefs.current[index]?.showCallout();
