@@ -65,8 +65,6 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 40,
         opacity: 0.5,
-        fontFamily: 'Montserrat_300Light',
-        
     },
     icon: {
         width: 20,

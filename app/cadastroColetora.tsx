@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Platform } from 'react-native';
 import StyledButton from '../components/StyledButton';
 import { router } from 'expo-router'
 import React, { useState } from 'react';
@@ -209,18 +209,15 @@ const styles = StyleSheet.create({
         marginLeft: 160,
         color: 'blue',
         textDecorationLine: 'none',
-        fontFamily: 'Montserrat Light',
     },
     registrar: {
         fontSize: 16,
         color: 'blue',
         textDecorationLine: 'none',
-        fontFamily: 'Montserrat Medium',
     },
     novouser: {
         fontSize: 16,
         marginRight: 10, // Ajuste a margem conforme necessário
-        fontFamily: 'Montserrat Medium'
     },
     textContainer: {
         flexDirection: 'row',
@@ -239,7 +236,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     cadastro: {
-        fontFamily: 'Montserrat_500Medium',
         fontSize: 60,
         marginBottom:24,
     },
@@ -261,13 +257,13 @@ const styles = StyleSheet.create({
     termsandcondtions: {
         fontSize: 10,
         marginRight: 4, // Ajuste a margem conforme necessário
-        fontFamily: 'Montserrat Medium'
+        
     },
     linktermsandcondtions: {
         fontSize: 10,
         color: 'blue',
         textDecorationLine: 'none',
         marginRight: 4, // Ajuste a margem conforme necessário
-        fontFamily: 'Montserrat Medium'
+        
     }
 });
