@@ -1,9 +1,10 @@
 import React from 'react';
-import { ScrollView, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { ScrollView, Text, View, StyleSheet } from 'react-native';
 import MenuBurger from '../../components/MenuBurguer';
 import PerfilButton from '../../components/PerfilButton';
 import Card from '../../components/Card';
 import ACarousel from '../../components/ACarousel';
+import AppCarousel from '../../components/AppCarousel copy';
 
 export default function Home() {
     return (
@@ -34,6 +35,9 @@ export default function Home() {
                 <Card />
                 <Card />
             </ScrollView>
+            <View style={styles.appCarouselContainer}>
+               
+            </View>
         </View>
     );
 }
@@ -61,5 +65,10 @@ const styles = StyleSheet.create({
     carousel: {
         flexDirection: 'row',
         paddingVertical: 20,
+    },
+    appCarouselContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });
