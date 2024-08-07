@@ -92,18 +92,15 @@ const styles = StyleSheet.create({
     marginLeft:160,
     color: 'blue',
     textDecorationLine: 'none',
-    fontFamily: 'Montserrat Light',
   },
   registrar:{
     fontSize: 16,
     color: 'blue',
     textDecorationLine: 'none',
-    fontFamily: 'Montserrat_500Medium',
   },
   novouser:{
     fontSize: 16,
     marginRight: 10, // Ajuste a margem conforme necessário
-    fontFamily: 'Montserrat_500Medium'
   },
   textContainer: {
     flexDirection: 'row',

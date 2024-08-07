@@ -1,36 +1,46 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { ScrollView, Text, View, StyleSheet } from 'react-native';
 import MenuBurger from '../../components/MenuBurguer';
 import PerfilButton from '../../components/PerfilButton';
-import { StyleSheet } from 'react-native';
+import Card from '../../components/Card';
 import ACarousel from '../../components/ACarousel';
+import AppCarousel from '../../components/AppCarousel copy';
 
 export default function Home() {
     return (
-        <View style={{ paddingTop: 20 }}>
+        <View style={{ flex: 1, paddingTop: 20 }}>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingBottom: 30 }}>
                 <MenuBurger
                     onPress={() => { }}
                     menuColor='#000'
-                    size={45}
-                ></MenuBurger>
+                    size={40}
+                />
                 <PerfilButton
                     onPress={() => { }}
                     position={{ top: 20, right: 20 }}
                     size={45}
                     backgroundColor='gray'
-                ></PerfilButton>
+                />
             </View>
             <View style={{ paddingTop: 30 }}>
                 <Text style={styles.greetingUser}>Welcome, User!</Text>
             </View>
             <View>
-                <ACarousel></ACarousel>
+                <ACarousel />
             </View>
-
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
+                <Card />
+                <Card />
+                <Card />
+                <Card />
+                <Card />
+            </ScrollView>
+            <View style={styles.appCarouselContainer}>
+               
+            </View>
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
     options: {
@@ -52,11 +62,13 @@ const styles = StyleSheet.create({
         margin: 20,
         fontWeight: 'bold',
     },
-
     carousel: {
         flexDirection: 'row',
         paddingVertical: 20,
     },
+    appCarouselContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 });
-
-

@@ -49,7 +49,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="recipientes"
         options={{
-          title: 'recipientes',
+          title: 'Recipientes',
           tabBarIcon: ({ color, focused, size }) =>
             <MaterialIcons size={size} name="oil-barrel" color={color} />
 
