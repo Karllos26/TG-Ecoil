@@ -48,7 +48,7 @@ export default function MyList() {
   return (
     <FlashList
       data={DATA}
-      renderItem={({ item }) => <CardView></CardView>}
+      renderItem={({  }) => <CardView></CardView>}
       estimatedItemSize={200}
       snapToOffsets={[...Array(DATA.length)].map(
         (x, i) => i * (width * 0.5 -40) + (i - 1) * 40,
@@ -57,6 +57,7 @@ export default function MyList() {
       snapToAlignment="start"
       scrollEventThrottle={16}
       decelerationRate="fast"
+      showsHorizontalScrollIndicator={false}
       style={{ flex: 1 , marginTop: 50, height: height * 0.5, width: width}}
     />
   );

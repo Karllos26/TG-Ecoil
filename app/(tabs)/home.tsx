@@ -1,17 +1,9 @@
 import React from 'react';
-<<<<<<< HEAD
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import MenuBurger from '../../components/MenuBurguer';
-import PerfilButton from '../../components/PerfilButton';
-import { StyleSheet } from 'react-native';
-import Card from '../../components/Card';
-=======
 import { Text, View } from 'react-native';
 import MenuBurger from '../../components/MenuBurguer';
 import PerfilButton from '../../components/PerfilButton';
 import { StyleSheet } from 'react-native';
 import ACarousel from '../../components/ACarousel';
->>>>>>> ed6ca156230a4483e667281cd4421d1bbe3e1233
 
 export default function Home() {
     return (
@@ -31,23 +23,11 @@ export default function Home() {
             </View>
             <View style={{ paddingTop: 30 }}>
                 <Text style={styles.greetingUser}>Welcome, User!</Text>
-<<<<<<< HEAD
-=======
-                   
             </View>
             <View>
                 <ACarousel></ACarousel>
             </View>
->>>>>>> ed6ca156230a4483e667281cd4421d1bbe3e1233
 
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-            </ScrollView>
         </View>
     );
 };
