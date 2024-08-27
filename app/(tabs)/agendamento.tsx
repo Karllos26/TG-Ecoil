@@ -1,147 +1,260 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
-import { FontAwesome } from '@expo/vector-icons';
-import { FlashList } from '@shopify/flash-list';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, TextInput, Button } from 'react-native';
+import { Agenda } from 'react-native-calendars';
 
-const monthNames = [
-  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-];
+// Define a interface para os itens da agenda
+interface AgendaItem {
+  name: string;
+  time: string;
+  location?: string;
+  description?: string;
+}
 
 export default function Tab() {
+  // Define o estado usando a interface AgendaItem
+  const [items, setItems] = useState<Record<string, AgendaItem[]>>({
+    '2024-08-29': [{ name: 'Meeting with client', time: '10:00 AM', location: 'Office', description: 'Discuss project updates' }],
+    '2024-08-30': [
+      { name: 'Team brainstorming session', time: '9:00 AM', location: 'Conference Room', description: 'Ideas for the new campaign' },
+      { name: 'Project presentation', time: '2:00 PM', location: 'Online', description: 'Present project results to stakeholders' },
+      { name: 'Project presentation', time: '5:00 PM', location: 'Online', description: 'Another presentation session' }
+    ],
+  });
 
-  const [currentMonth, setCurrentMonth] = useState<string>(monthNames[new Date().getMonth()]);
-  const [selectedDay, setSelectedDay] = useState<number>(new Date().getDate());
-  const daysInMonth: number = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-  const days: number[] = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<AgendaItem | null>(null);
 
-  const renderItem = ({ item }: { item: number }) => {
-    const dayStyle = item === selectedDay ? styles.selectedDay : styles.day;
+  // Estado para o formulário de criação de agendamento
+  const [newItem, setNewItem] = useState<AgendaItem>({
+    name: '',
+    time: '',
+    location: '',
+    description: ''
+  });
+  const [selectedDate, setSelectedDate] = useState<string>('');
+
+  const renderEmptyData = () => {
     return (
-      <TouchableOpacity style={dayStyle} onPress={() => handleDayPress(item)}>
-        <Text>{item}</Text>
-      </TouchableOpacity>
+      <View style={styles.emptyDataContainer}>
+        <Text>No events for this day</Text>
+      </View>
     );
   };
 
-  const handleAgendar = () => {
-    router.push('agendamento')
-  }
-
-  const handleDayPress = (day: number) => {
-    setSelectedDay(day);
-    // Aqui você pode adicionar lógica adicional ao selecionar um dia, se necessário
+  const handleItemPress = (item: AgendaItem) => {
+    setSelectedItem(item);
+    setModalVisible(true);
   };
 
-  useEffect(() => {
-    // Define o dia atual como selecionado quando o componente é montado
-    setSelectedDay(new Date().getDate());
-  }, []);
+  const handleAddItem = () => {
+    if (!selectedDate) return;
+
+    setItems((prevItems) => {
+      const updatedItems = { ...prevItems };
+      if (!updatedItems[selectedDate]) {
+        updatedItems[selectedDate] = [];
+      }
+      updatedItems[selectedDate].push(newItem);
+      return updatedItems;
+    });
+
+    // Resetar o formulário
+    setNewItem({ name: '', time: '', location: '', description: '' });
+    setSelectedDate('');
+    setCreateModalVisible(false);
+  };
 
   return (
-    <View>
-      <View style={{ justifyContent: 'space-evenly', alignContent: "space-between", display: 'flex', }}>
-        <View>
-          <Text style={styles.textTitle}>{currentMonth}</Text>
-        </View>
-        <View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleAgendar}
-          >
-            <Text style={styles.buttonText}>Agendar</Text>
-            <FontAwesome style={styles.icon} name='plus' color='#fff' />
+    <View style={{ flex: 1, marginHorizontal: 10, marginTop: 60 }}>
+      
+      {/* Botão para adicionar um novo agendamento */}
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => setCreateModalVisible(true)}
+      >
+        <Text style={styles.addButtonText}>Add New Event</Text>
+      </TouchableOpacity>
+      
+      <Agenda
+        items={items}
+        showOnlySelectedDayItems={true}
+        renderEmptyData={renderEmptyData}
+        renderItem={(item: AgendaItem) => (
+          <TouchableOpacity onPress={() => handleItemPress(item)}>
+            <View style={styles.itemContainer}>
+              <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
+              <Text>{item.time}</Text>
+            </View>
           </TouchableOpacity>
+        )}
+        theme={{
+          selectedDayBackgroundColor: 'green',
+          todayTextColor: 'green',
+          arrowColor: 'green',
+        }}
+      />
+
+      {/* Modal para visualizar o item */}
+      <Modal
+        transparent={true}
+        visible={modalVisible}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>{selectedItem?.name}</Text>
+            <Text style={styles.modalText}>Time: {selectedItem?.time}</Text>
+            <Text style={styles.modalText}>Location: {selectedItem?.location}</Text>
+            <Text style={styles.modalText}>Description: {selectedItem?.description}</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
         </View>
+      </Modal>
 
-      </View>
-      <View >
-        <FlashList
-          data={days}
-          renderItem={renderItem}
-          estimatedItemSize={200}
-          horizontal
-          snapToAlignment="center"
-          scrollEventThrottle={16}
-          keyExtractor={(item) => item.toString()}
-          decelerationRate="fast"
-          showsHorizontalScrollIndicator={false}
-          initialScrollIndex={selectedDay - 1}
-          style={{ margin: 50, paddingTop: 50, height: 120, width: 200 }}
+      {/* Modal para adicionar novo item */}
+      <Modal
+        transparent={true}
+        visible={createModalVisible}
+        animationType="slide"
+        onRequestClose={() => setCreateModalVisible(false)}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Add New Event</Text>
 
-        />
-      </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Event Name"
+              value={newItem.name}
+              onChangeText={(text) => setNewItem((prev) => ({ ...prev, name: text }))}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Time"
+              value={newItem.time}
+              onChangeText={(text) => setNewItem((prev) => ({ ...prev, time: text }))}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Location"
+              value={newItem.location}
+              onChangeText={(text) => setNewItem((prev) => ({ ...prev, location: text }))}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Description"
+              value={newItem.description}
+              onChangeText={(text) => setNewItem((prev) => ({ ...prev, description: text }))}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Date (YYYY-MM-DD)"
+              value={selectedDate}
+              onChangeText={(text) => setSelectedDate(text)}
+            />
+
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={handleAddItem}
+            >
+              <Text style={styles.addButtonText}>Add Event</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setCreateModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  textTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'left',
-    padding: 20,
-    marginTop: 30,
-  },
-  button: {
+  addButton: {
     backgroundColor: 'green',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    padding: 10,
     borderRadius: 10,
-    marginTop: 28,
-    width: 150,
-    height: 50,
     alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row', // Align icon and text horizontally
+    marginVertical: 10,
   },
-  buttonText: {
-    fontWeight: 'bold',
+  addButtonText: {
     color: '#fff',
-    marginLeft: 10, // Add spacing between icon and text
-    paddingRight: 10,
-    alignItems: 'center',
-    fontSize: 16, // Center text vertically
+    fontSize: 16,
   },
-  icon: {
-    marginLeft: 10, // Add spacing between icon and text
-    alignItems: 'center', // Center icon vertically
+  itemContainer: {
+    marginVertical: 10,
+    marginTop: 30,
+    backgroundColor: 'white',
+    marginHorizontal: 10,
+    padding: 10,
+    borderRadius: 10, // Arredonda os cantos dos itens
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5, // Sombra para Android
   },
-  container: {
+  emptyDataContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  month: {
-    fontSize: 20,
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fundo escurecido
+  },
+  modalContainer: {
+    width: 300,
+    backgroundColor: '#fff',
+    borderRadius: 20, // Arredonda os cantos do modal
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5, // Sombra para Android
+  },
+  modalTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
+    color: 'green',
     marginBottom: 10,
   },
-  daysContainer: {
-    marginTop: 10,
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: '#333',
+  },
+  input: {
+    width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  closeButton: {
+    marginTop: 20,
     paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: 'red',
+    borderRadius: 10,
   },
-  day: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#eee',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 5,
-  },
-  selectedDay: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#007bff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 5,
-  },
-  listContainer: {
-    margin: 50,
-    paddingTop: 50,
-    height: 120,
-    width: 200
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });

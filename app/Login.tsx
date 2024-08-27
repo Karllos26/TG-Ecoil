@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import StyledInput from '../components/StyledInput';
-import StyledButton from '../components/StyledButton';
 import { router } from 'expo-router'
 import React from 'react';
 import StyledButtonIcon from '../components/StyledButtonIcon';

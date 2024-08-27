@@ -4,7 +4,6 @@ import MenuBurger from '../../components/MenuBurguer';
 import PerfilButton from '../../components/PerfilButton';
 import Card from '../../components/Card';
 import ACarousel from '../../components/ACarousel';
-import AppCarousel from '../../components/AppCarousel copy';
 
 export default function Home() {
     return (
