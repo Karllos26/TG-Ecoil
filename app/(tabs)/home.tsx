@@ -2,20 +2,25 @@ import React from 'react';
 import { ScrollView, Text, View, StyleSheet } from 'react-native';
 import MenuBurger from '../../components/MenuBurguer';
 import PerfilButton from '../../components/PerfilButton';
-import Card from '../../components/Card';
 import ACarousel from '../../components/ACarousel';
+import { router } from 'expo-router';
 
 export default function Home() {
+
+    const handlePerfil = () => {
+        router.push('perfil')
+      }
+
     return (
         <View style={{ flex: 1, paddingTop: 20 }}>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingBottom: 30 }}>
+            <View style={{justifyContent: 'flex-start', alignItems: 'center', paddingBottom: 30 }}>
                 <MenuBurger
                     onPress={() => { }}
                     menuColor='#000'
                     size={40}
                 />
                 <PerfilButton
-                    onPress={() => { }}
+                    onPress={handlePerfil}
                     position={{ top: 20, right: 20 }}
                     size={45}
                     backgroundColor='gray'
@@ -27,16 +32,7 @@ export default function Home() {
             <View>
                 <ACarousel />
             </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-            </ScrollView>
-            <View style={styles.appCarouselContainer}>
-               
-            </View>
+
         </View>
     );
 }
