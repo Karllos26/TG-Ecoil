@@ -4,20 +4,23 @@ import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
 interface RecipientesCardProps {
     imageSource: any; // Ajuste o tipo conforme necessário para suas imagens
     name: string;
-    description: string;
+    description?: string;
+    unitOfMeasure?: string
+    maxCapacity?: number
 }
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-const RecipientesCard: React.FC<RecipientesCardProps> = ({ imageSource, name, description }) => {
+
+const RecipientesCard: React.FC<RecipientesCardProps> = ({ imageSource, name, description, unitOfMeasure, maxCapacity }) => {
     return (
         <View style={styles.card}>
             <View style={styles.cardImage}>
                 <Image source={imageSource} style={styles.image} />
             </View>
-            <Text style={styles.nameLabel}>Nome:</Text>
-            <Text style={styles.name}>{name}</Text>
-            <Text style={styles.description}>{description}</Text>
+            <Text style={styles.nameLabel}>Nome: {name}</Text>
+             {description && <Text style={styles.nameLabel}>Descrição: {description}</Text>}
+            <Text style={styles.nameLabel}>{maxCapacity} {unitOfMeasure}</Text>
         </View>
     );
 };

@@ -1,14 +1,17 @@
 import React, { useState, useRef } from 'react';
-import { Text, View, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native';
+import { Text, View, StyleSheet, Dimensions, TouchableOpacity, Image, Alert } from 'react-native';
 import { DrawerLayout, GestureHandlerRootView } from 'react-native-gesture-handler';
 import MenuBurger from '../../components/MenuBurger'; // Importando o MenuBurger
 import PerfilButton from '../../components/PerfilButton';
 import ACarousel from '../../components/ACarousel';
-import { router } from 'expo-router';
+import { router, useGlobalSearchParams } from 'expo-router';
+import { signOut } from 'firebase/auth'
+import { auth } from '../../firebaseConfig';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function Home() {
+    const { userId, email } = useGlobalSearchParams();
     const drawer = useRef<DrawerLayout>(null); // Referência para DrawerLayout
     const [isDrawerOpen, setIsDrawerOpen] = useState(false); // Controle do estado da gaveta
 
@@ -37,7 +40,7 @@ export default function Home() {
                     source={{ uri: 'https://via.placeholder.com/100' }} // Link da imagem do perfil
                     style={styles.profileImage}
                 />
-                <Text style={styles.userName}>Nome do Usuário</Text>
+                <Text style={styles.userName}>Nome do Usuário aaa</Text>
             </View>
 
             <View style={styles.drawerLinks}>
@@ -46,13 +49,32 @@ export default function Home() {
                 {renderMenuItem('Pontos', 'pontos')}
                 {renderMenuItem('Recipientes', 'recipientes')}
                 {renderMenuItem('Perfil', 'perfil')}
-                {renderMenuItem('Sair', 'logout')}
+                {logoutItem('Sair')}
             </View>
         </View>
     );
 
+    const logout = () => {
+        signOut(auth)
+            .then(() => {
+                router.push('/');
+            })
+            .catch((error) => {
+                Alert.alert('Erro', 'Erro ao sair: ' + error.message);
+            });
+    };
+
+    const logoutItem = (label: string) => (
+        <TouchableOpacity style={styles.drawerLink} onPress={logout}>
+            <Text style={styles.drawerLinkText}>{label}</Text>
+        </TouchableOpacity>
+    );
+
     const renderMenuItem = (label: string, route: string) => (
-        <TouchableOpacity style={styles.drawerLink} onPress={() => router.push(route)}>
+        <TouchableOpacity style={styles.drawerLink} onPress={() => router.push({
+            pathname: route,
+            params: { userId: userId, email: email },
+          })}>
             <Text style={styles.drawerLinkText}>{label}</Text>
         </TouchableOpacity>
     );

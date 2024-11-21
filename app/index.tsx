@@ -1,11 +1,11 @@
 import { StyleSheet } from "react-native";
 import React from "react";
-import CadastroColetora from "./cadastroColetora";
+import LoginBasic from "./LoginBasic";
 
 
-export default function Index(){
+export default function Index() {
     return (
-        <CadastroColetora/>
+        <LoginBasic />
     )
 }
 

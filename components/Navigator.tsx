@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import SplashScreen from '../app/startScren';
-import LoginScreen from '../app/login';
+import LoginScreen from '../app/Login';
 import {
   useSharedValue,
   withTiming,

@@ -1,10 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import MenuBurger from '../components/MenuBurger';
 import { router } from 'expo-router';
 import { DrawerLayout, GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
-
+import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { auth, firestore } from '../firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -17,6 +19,25 @@ export default function Profile() {
         email: 'convidado@example.com',
         phone: 'N/A',
     });
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userDoc = await getDoc(doc(firestore, 'users', user.uid));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    setUserInfo({
+                        name: userData.name || 'Convidado',
+                        email: userData.email || 'convidado@example.com',
+                        phone: userData.phone || 'N/A',
+                    });
+                    setProfileImage(userData.profileImage || 'https://via.placeholder.com/150');
+                }
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     // Função para alternar o estado do Drawer
     const toggleDrawer = () => {
@@ -48,10 +69,10 @@ export default function Profile() {
         <View style={styles2.drawerContainer}>
             <View style={styles2.drawerTopSection}>
                 <Image
-                    source={{ uri: 'https://via.placeholder.com/100' }} // Link da imagem do perfil
+                    source={{ uri: profileImage }} // Link da imagem do perfil
                     style={styles2.profileImage}
                 />
-                <Text style={styles2.userName}>Nome do Usuário</Text>
+                <Text style={styles2.userName}>{userInfo.name}</Text>
             </View>
 
             <View style={styles2.drawerLinks}>
@@ -60,9 +81,25 @@ export default function Profile() {
                 {renderMenuItem('Pontos', 'pontos')}
                 {renderMenuItem('Recipientes', 'recipientes')}
                 {renderMenuItem('Perfil', 'perfil')}
-                {renderMenuItem('Sair', 'logout')}
+                {logoutItem('Sair')}
             </View>
         </View>
+    );
+
+    const logout = () => {
+        signOut(auth)
+            .then(() => {
+                router.push('/');
+            })
+            .catch((error) => {
+                Alert.alert('Erro', 'Erro ao sair: ' + error.message);
+            });
+    };
+
+    const logoutItem = (label: string) => (
+        <TouchableOpacity style={styles2.drawerLink} onPress={logout}>
+            <Text style={styles2.drawerLinkText}>{label}</Text>
+        </TouchableOpacity>
     );
 
     const renderMenuItem = (label: string, route: string) => (

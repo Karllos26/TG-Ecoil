@@ -1,38 +1,42 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, TextInput, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, TextInput } from 'react-native';
 import { Agenda } from 'react-native-calendars';
-
-// Define a interface para os itens da agenda
-interface AgendaItem {
-  name: string;
-  time: string;
-  location?: string;
-  description?: string;
-}
+import { getGroupedScheduler, GroupSchedulerResponse, GroupScheduler, SchedulerItem, addSchedulerItem } from '../../components/service/Api';
+import { useGlobalSearchParams } from 'expo-router';
 
 export default function Tab() {
-  // Define o estado usando a interface AgendaItem
-  const [items, setItems] = useState<Record<string, AgendaItem[]>>({
-    '2024-08-29': [{ name: 'Meeting with client', time: '10:00 AM', location: 'Office', description: 'Discuss project updates' }],
-    '2024-08-30': [
-      { name: 'Team brainstorming session', time: '9:00 AM', location: 'Conference Room', description: 'Ideas for the new campaign' },
-      { name: 'Project presentation', time: '2:00 PM', location: 'Online', description: 'Present project results to stakeholders' },
-      { name: 'Project presentation', time: '5:00 PM', location: 'Online', description: 'Another presentation session' }
-    ],
-  });
-
+  const { userId, email } = useGlobalSearchParams();
+  const [items, setItems] = useState<GroupScheduler>({});
   const [modalVisible, setModalVisible] = useState(false);
   const [createModalVisible, setCreateModalVisible] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<AgendaItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<SchedulerItem | null>(null);
 
   // Estado para o formulário de criação de agendamento
-  const [newItem, setNewItem] = useState<AgendaItem>({
+  const [newItem, setNewItem] = useState<SchedulerItem>({
+    userId: userId as string,
     name: '',
     time: '',
     location: '',
-    description: ''
+    description: '',
+    date: '',
   });
+
   const [selectedDate, setSelectedDate] = useState<string>('');
+
+  useEffect(() => {
+    const fetchSchedulerItems = async () => {
+      try {
+        const response: GroupSchedulerResponse = await getGroupedScheduler(userId as string);
+        setItems(response.groupScheduler);
+      } catch (error) {
+        console.error('Erro ao obter os agendamentos:', error);
+      }
+    };
+
+    if (userId) {
+      fetchSchedulerItems();
+    }
+  }, [userId]);
 
   const renderEmptyData = () => {
     return (
@@ -42,45 +46,58 @@ export default function Tab() {
     );
   };
 
-  const handleItemPress = (item: AgendaItem) => {
+  const handleItemPress = (item: SchedulerItem) => {
     setSelectedItem(item);
     setModalVisible(true);
   };
 
-  const handleAddItem = () => {
+  const handleAddItem = async () => {
     if (!selectedDate) return;
 
-    setItems((prevItems) => {
-      const updatedItems = { ...prevItems };
-      if (!updatedItems[selectedDate]) {
-        updatedItems[selectedDate] = [];
-      }
-      updatedItems[selectedDate].push(newItem);
-      return updatedItems;
-    });
+    try {
+      const addedItem = await addSchedulerItem({ ...newItem, date: selectedDate });
 
-    // Resetar o formulário
-    setNewItem({ name: '', time: '', location: '', description: '' });
-    setSelectedDate('');
-    setCreateModalVisible(false);
+      setItems((prevItems: GroupScheduler) => {
+        const updatedItems = { ...prevItems };
+        if (!updatedItems[selectedDate]) {
+          updatedItems[selectedDate] = [];
+        }
+        updatedItems[selectedDate].push(addedItem);
+        return updatedItems;
+      });
+
+      // Resetar o formulário
+      setNewItem({
+        userId: userId as string,
+        name: '',
+        time: '',
+        location: '',
+        description: '',
+        date: '',
+      });
+      setSelectedDate('');
+      setCreateModalVisible(false);
+    } catch (error) {
+      console.error('Erro ao adicionar o item agendado:', error);
+    }
   };
 
   return (
     <View style={{ flex: 1, marginHorizontal: 10, marginTop: 60 }}>
-      
+
       {/* Botão para adicionar um novo agendamento */}
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => setCreateModalVisible(true)}
       >
-        <Text style={styles.addButtonText}>Add New Event</Text>
+        <Text style={styles.addButtonText}>Adicionar</Text>
       </TouchableOpacity>
-      
+
       <Agenda
         items={items}
         showOnlySelectedDayItems={true}
         renderEmptyData={renderEmptyData}
-        renderItem={(item: AgendaItem) => (
+        renderItem={(item: SchedulerItem) => (
           <TouchableOpacity onPress={() => handleItemPress(item)}>
             <View style={styles.itemContainer}>
               <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
@@ -127,7 +144,7 @@ export default function Tab() {
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Add New Event</Text>
+            <Text style={styles.modalTitle}>Adicionar novo evento</Text>
 
             <TextInput
               style={styles.input}
@@ -164,7 +181,7 @@ export default function Tab() {
               style={styles.addButton}
               onPress={handleAddItem}
             >
-              <Text style={styles.addButtonText}>Add Event</Text>
+              <Text style={styles.addButtonText}>Adicionar</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.closeButton}

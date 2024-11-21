@@ -10,7 +10,7 @@ export default function Login() {
     router.push('home')
   }
   const handleCadasro = () => {
-    router.push('cadastroColetora')
+    router.push('cadastro')
   }
   return (
     <View style={styles.container}>
